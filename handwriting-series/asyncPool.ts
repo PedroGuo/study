@@ -13,9 +13,7 @@ async function asyncPool(limit = 6, array = [], iteratorFn) {
     const allTask = []
     const executing = []
     for(const item of array) {
-        const p = Promise.resolve().then(() => {
-            iteratorFn(item, array)
-        })
+        const p = Promise.resolve().then(() =>  iteratorFn(item, array))
         allTask.push(p)
         if (limit <= array.length) {
             const e = p.then( () => executing.splice(executing.indexOf(e), 1))
@@ -26,4 +24,48 @@ async function asyncPool(limit = 6, array = [], iteratorFn) {
         }
     }
     return Promise.all(allTask)
+
+    
 }
+// es6 实现版 
+function asyncPoolEs6(limit = 6, array = [], iteratorFn) {
+    let i = 0
+    const allTask = []
+    const executing = []
+    const enqueue = function() {
+        if (i === array.length) {
+            return Promise.resolve()
+        }
+
+        const item = array[i++]
+        const p = Promise.resolve().then(() =>  iteratorFn(item, array))
+        allTask.push(p)
+
+
+        let r = Promise.resolve()
+
+        if(limit <= array.length) {
+            const e = p.then( () => executing.splice(executing.indexOf(e), 1))
+            executing.push(e)
+            if (executing.length === limit) {
+                // await Promise.race(executing)
+                r = Promise.race(executing)
+            }
+        }
+
+        return r.then(() => enqueue())
+       
+    }
+
+    return enqueue().then(() => Promise.all(allTask))
+}
+
+ asyncPoolEs6(
+    3,
+    [...new Array(10).keys()],
+    (i) => {
+     console.log(i)
+     return i + 'res'
+    }
+  ).then(results =>   console.log('results: ',results))
+  
