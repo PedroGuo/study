@@ -1,10 +1,10 @@
 // 文档 https://www.yuque.com/javascript-road/knowledge/hgpmpd/edit
 function jsonp({ url, data }, options = { callbackName: 'callback' }) {
       return new Promise((resolve, reject) => {
-        if (!url && typeof url !== 'string') {
+        if (!url || typeof url !== 'string') {
           return reject('url 参数不合法')
         }
-        if (!data && typeof data !== 'object') {
+        if (!data || typeof data !== 'object') {
           return reject('data 参数不合法')
         }
         if (!~url.indexOf('?')) url += '?'
