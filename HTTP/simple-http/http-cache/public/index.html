@@ -1,13 +1,90 @@
 <!DOCTYPE html>
 <html lang="zh-cn">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ETag 使用示例</title>
-    <script src="/index.js"></script>
+    <style>
+        .upload-demo {
+            width: 400px;
+            margin: 60px auto;
+        }
+
+        .el-upload {
+            display: inline-block;
+            text-align: center;
+            cursor: pointer;
+            outline: none;
+        }
+
+        .el-upload-dragger {
+            background-color: #fff;
+            border: 1px dashed #d9d9d9;
+            border-radius: 6px;
+            box-sizing: border-box;
+            width: 360px;
+            height: 180px;
+            text-align: center;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .el-upload-dragger .el-icon-upload {
+            font-size: 67px;
+            color: #C0C4CC;
+            margin: 40px 0 16px;
+            line-height: 50px;
+        }
+
+        .el-upload-dragger .el-upload__text {
+            color: #606266;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .el-upload__input {
+            display: none;
+        }
+    </style>
 </head>
+
 <body>
-    <h3>ETag 使用示例</h3>
+    <div id="app" class="upload-demo" @drop.prevent="onDrop" @dragover.prevent="onDragover"
+        @dragleave.prevent="dragover = false">
+        <div tabindex="0" class="el-upload el-upload--text" @click="handleClick">
+            <div class="el-upload-dragger">
+                <span>
+                    <svg t="1623763567583" class="icon" viewBox="0 0 1024 1024" version="1.1"
+                        xmlns="http://www.w3.org/2000/svg" p-id="1208" width="67" height="67">
+                        <path
+                            d="M803.786667 414.4a5.333333 5.333333 0 0 1-4.106667-4.053333 304 304 0 0 0-600.746667 50.666666 5.333333 5.333333 0 0 1-4.16 4.96A196.16 196.16 0 0 0 42.666667 660.426667C44.426667 768 134.986667 853.333333 242.666667 853.333333h92.373333a5.333333 5.333333 0 0 0 5.333333-5.333333v-64a5.333333 5.333333 0 0 0-5.333333-5.333333H241.653333c-60.693333 0-114.026667-43.413333-122.986666-103.466667a121.866667 121.866667 0 0 1 95.253333-137.013333l53.333333-11.093334a5.333333 5.333333 0 0 0 4.266667-5.333333l1.706667-54.613333a229.333333 229.333333 0 0 1 453.866666-38.773334L736.533333 474.666667a5.333333 5.333333 0 0 0 4.266667 4.213333l45.973333 8.533333a147.04 147.04 0 0 1-26.08 291.253334H554.666667a5.333333 5.333333 0 0 1-5.333334-5.333334v-182.293333a5.333333 5.333333 0 0 1 9.12-3.786667l48 48a5.333333 5.333333 0 0 0 7.52 0l45.28-45.226666a5.333333 5.333333 0 0 0 0-7.573334l-94.453333-94.4-49.013333-49.066666a5.333333 5.333333 0 0 0-7.573334 0l-49.013333 49.066666-94.293333 94.24a5.333333 5.333333 0 0 0 0 7.573334l45.28 45.226666a5.333333 5.333333 0 0 0 7.52 0l48-48a5.333333 5.333333 0 0 1 9.12 3.786667V848a5.333333 5.333333 0 0 0 5.333333 5.333333h279.626667a221.706667 221.706667 0 0 0 44.16-438.933333z"
+                            p-id="1209"></path>
+                    </svg>
+
+                </span>
+
+                <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+            </div><input ref="input" @change="handleInputChange" type="file" name="file" multiple="multiple"
+                class="el-upload__input">
+        </div>
+        <div class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+        <ul class="el-upload-list el-upload-list--text">
+            <li v-for="img in images">
+                <img :src="img" alt="123">
+            </li>
+        </ul>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="/index.js"></script>
+
 </body>
+
+
 </html>
