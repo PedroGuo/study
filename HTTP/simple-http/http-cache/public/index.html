@@ -7,6 +7,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ETag 使用示例</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        ul {
+            list-style: none;
+        }
+        a {
+            text-decoration: none;
+        }
         .upload-demo {
             width: 400px;
             margin: 60px auto;
@@ -52,6 +62,22 @@
         .el-upload__input {
             display: none;
         }
+
+        .el-upload-list li {
+            overflow: hidden;
+            background-color: #fff;
+            border: 1px solid #c0ccda;
+            border-radius: 6px;
+            box-sizing: border-box;
+            width: 148px;
+            height: 148px;
+            margin: 0 8px 8px 0;
+            display: inline-block;
+        }
+        .el-upload-list li img {
+            width: 100%;
+            height: 100%;
+        }
     </style>
 </head>
 
@@ -71,17 +97,15 @@
                 </span>
 
                 <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-            </div><input ref="input" @change="handleInputChange" type="file" name="file" multiple="multiple"
-                class="el-upload__input">
+            </div><input ref="input" @change="handleInputChange" accept="image/png, image/jpeg" type="file" name="file"
+                multiple="multiple" class="el-upload__input">
         </div>
         <div class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
-        <ul class="el-upload-list el-upload-list--text">
-            <li v-for="img in images">
-                <img :src="img" alt="123">
-            </li>
-        </ul>
+        <ul class="el-upload-list"></ul>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+
     <script src="/index.js"></script>
 
 </body>
