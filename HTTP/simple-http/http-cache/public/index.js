@@ -20,9 +20,9 @@ function onProgress(progressEvent) {
     console.log(uploadMessage);
 }
 
-function uploadFile(file) {
+function uploadFile(file, name = 'file') {
     const formData = new FormData()
-    formData.append('file', file)
+    formData.append(name, file)
     axios.post('/upload/single', formData, {
         onUploadProgress(progressEvent) {
             if (progressEvent.lengthComputable) {
