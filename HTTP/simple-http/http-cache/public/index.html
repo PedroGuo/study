@@ -82,9 +82,8 @@
 </head>
 
 <body>
-    <div id="app" class="upload-demo" @drop.prevent="onDrop" @dragover.prevent="onDragover"
-        @dragleave.prevent="dragover = false">
-        <div tabindex="0" class="el-upload el-upload--text" @click="handleClick">
+    <div id="app" class="upload-demo">
+        <div tabindex="0" class="el-upload el-upload--text">
             <div class="el-upload-dragger">
                 <span>
                     <svg t="1623763567583" class="icon" viewBox="0 0 1024 1024" version="1.1"
@@ -97,7 +96,7 @@
                 </span>
 
                 <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-            </div><input ref="input" @change="handleInputChange" accept="image/png, image/jpeg" type="file" name="file"
+            </div><input ref="input" accept="image/png, image/jpeg" type="file" name="file"
                 multiple="multiple" class="el-upload__input">
         </div>
         <div class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
