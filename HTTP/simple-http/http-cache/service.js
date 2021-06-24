@@ -15,6 +15,6 @@ app.use( // 使用静态资源中间件
   })
 );
 
-app.listen(8080, () => {
-  console.log("app starting at port 8080");
+app.listen(3000, () => {
+  console.log("app starting at port 3000");
 });
