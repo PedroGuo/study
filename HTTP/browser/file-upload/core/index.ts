@@ -1,9 +1,19 @@
-import { UploadOptions, ElementParam } from "../interface/uploadParams";
+import { EventEmitter } from './eventEmiter'
 import { Plugin } from "../plugins/plugin";
+import { Hooks, HooksType } from '../interface/hooks'
+import { UploadOptions, ElementParam } from "../interface/uploadParams";
+import { callWithErrorHandling, isUndef, warn, getElement, addEvent  } from '../utils/index'
+
+type ArraysOf<T> = {
+  [K in keyof T]: Array<T[K]>;
+}
+
+type PluginsHooks = ArraysOf<Hooks>
 
 interface PluginsMap {
   [key: string]: boolean;
 }
+
 
 const DEFAULT_OPTIONS: UploadOptions = {
   name: "file",
@@ -16,21 +26,106 @@ const DEFAULT_OPTIONS: UploadOptions = {
   limit: -1,
 };
 
-export class UploadConstructor<O = {}> {
+
+export class UploadConstructor<O = {}> extends EventEmitter {
   static plugins: Plugin[] = [];
   static pluginsMap: PluginsMap = {};
+  optiosn: UploadOptions = {}
+  container: HTMLElement | null
+  fileList: File[]
+  [key: string]: any;
+
+  private pluginsHooks: PluginsHooks = {}
 
   constructor(opt: UploadOptions & O) {
-    const optiosn = { ...DEFAULT_OPTIONS, ...opt };
+    super()
+    this.optiosn = { ...DEFAULT_OPTIONS, ...opt };
+    this.init();
   }
 
-  private init() {}
+  private init() {
+    const { template } = this.optiosn
+    this.container =  getElement(template)
+    this.applyPlugins()
+    this.invokePluginHook('init')
+    addEvent(this.container, 'click', () => {
+      const inputElement = this.createInputElemnt()
+      inputElement.value = null
+      inputElement.click()
+    })
+  }
 
-  private applyPlugins() {}
+  private createInputElemnt() {
+    const { container, optiosn } = this
+    const { accept, multiple } = optiosn
+    const inputElement: HTMLInputElement = document.createElement('input')
+    inputElement.setAttribute('style', 'display: none');
+    inputElement.setAttribute('type', 'file')
+    inputElement.setAttribute('accept', accept)
+    if (multiple) {
+      inputElement.setAttribute('multiple', 'multiple')
+    }
+    container.appendChild(inputElement)
+    return inputElement
+  }
 
-  static use(plugins: Plugin[]) {}
+  private invokePluginHook(hookType:HooksType) {
+    const invokePluginHooks = this.pluginsHooks[hookType]
+    invokePluginHooks.forEach(hook => {
+      if (typeof hook === 'function') {
+        callWithErrorHandling(hook, this)
+      }
+    })
+  }
 
-  destroy() {}
+  private applyPlugins() {
+    const hooks: Array<keyof Hooks> = ['init', 'create', 'beforeUpload', 'onUpload', 'afterUpload', 'destroy']
+    this.pluginsHooks = {
+      init: [],
+      create: [],
+      destroy: [],
+      beforeUpload: [],
+      afterUpload: [],
+      onUpload: []
+    }
+    for (let i = 0; i < hooks.length; ++i) {
+      this.pluginsHooks[hooks[i]] = []
+      for (let j = 0; j < UploadConstructor.plugins.length; ++j) {
+        const hook = UploadConstructor.plugins[j][hooks[i]]
+        if (hook !== undefined) {
+          (this.pluginsHooks[hooks[i]] as any[]).push(hook)
+        }
+      }
+    }
+  }
+
+  static use(plugin: Plugin) {
+    const name = plugin.name
+    if (isUndef(name)) {
+      warn(
+        `Plugin Class must specify plugin's name in static property by 'pluginName' field.`
+      )
+      return UploadConstructor
+    }
+    if (UploadConstructor.pluginsMap[name]) {
+      warn(
+        `This plugin has been registered, maybe you need change plugin's name`
+      )
+      return UploadConstructor
+    }
+    UploadConstructor.pluginsMap[name] = true
+    UploadConstructor.plugins.push(plugin)
+    return UploadConstructor
+  }
+
+  destroy() {
+    this.invokePluginHook('destroy')
+    UploadConstructor.plugins = []
+    UploadConstructor.pluginsMap = {}
+    this.pluginsHooks = {}
+    this.optiosn = {}
+    this.container = null
+  }
 
   // 取消上传
   abort() {}

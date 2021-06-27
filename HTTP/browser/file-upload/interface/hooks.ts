@@ -2,12 +2,12 @@ import { Upload } from "../core";
 
 export type UploadFile = File | FileList;
 
-export type InitHook = () => any;
-export type CreateHook = () => any;
+export type InitHook = (ctx: Upload) => any;
+export type CreateHook = (ctx: Upload) => any;
 export type beforeUploadHook = (ctx: Upload, file?: UploadFile) => any;
 export type onUploadHook = (ctx: Upload, file?: UploadFile) => any;
 export type afterUploadHook = (ctx: Upload, file?: UploadFile) => any;
-export type destroyHook = () => void;
+export type destroyHook = (ctx: Upload) => void;
 
 export interface Hooks {
   init?: InitHook;
@@ -17,3 +17,5 @@ export interface Hooks {
   afterUpload?: afterUploadHook;
   destroy?: destroyHook;
 }
+
+export type HooksType = keyof Hooks
