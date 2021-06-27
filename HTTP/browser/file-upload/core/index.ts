@@ -48,12 +48,25 @@ export class UploadConstructor<O = {}> extends EventEmitter {
     this.container =  getElement(template)
     this.applyPlugins()
     this.invokePluginHook('init')
-    addEvent(this.container, 'click', () => {
-      const inputElement = this.createInputElemnt()
+    this.setEventLister()
+  }
+
+  private setEventLister() {
+    const { container } = this
+    const inputElement = this.createInputElemnt()
+    addEvent(container, 'click', () => {
       inputElement.value = null
       inputElement.click()
     })
+    addEvent(inputElement, 'change', (e:Event) => {
+      const fileList = (e.target as HTMLInputElement).files
+      if (!fileList || !fileList.length) return
+      this.fileList.push(...Array.from(fileList))
+      this.invokePluginHook('beforeUpload')
+    })
   }
+
+
 
   private createInputElemnt() {
     const { container, optiosn } = this
