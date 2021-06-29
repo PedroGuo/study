@@ -4,6 +4,8 @@ import { defaultTemplate } from '../plugins/template'
 import { Hooks, HooksType } from '../interface/hooks'
 import { UploadOptions, ElementParam } from "../interface/uploadParams";
 import { callWithErrorHandling, isUndef, warn, getElement, addEvent  } from '../utils/index'
+import { createAdapter } from '../http/adapter'
+
 
 type ArraysOf<T> = {
   [K in keyof T]: Array<T[K]>;
@@ -65,7 +67,33 @@ export class UploadConstructor<O = {}> extends EventEmitter {
       const fileList = (e.target as HTMLInputElement).files
       if (!fileList || !fileList.length) return
       this.fileList.push(...Array.from(fileList))
-      this.invokePluginHook('beforeUpload')
+      this.uploadFile()
+    })
+  }
+
+  private uploadFile() {
+    this.invokePluginHook('beforeUpload')
+    const { fileList } = this
+    const { name, accept, headers } = this.optiosn
+    const adapter = createAdapter()
+    const formData = new FormData()
+    fileList.forEach(file => {
+      formData.append(name, file)
+    })
+
+    adapter({
+      url: accept,
+      headers,
+      body: formData,
+      onProgress(e) {
+        this.invokePluginHook('onUpload')
+      },
+      onSuccess() {
+        
+      },
+      onError() {
+
+      }
     })
   }
 
