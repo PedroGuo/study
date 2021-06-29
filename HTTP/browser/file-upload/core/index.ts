@@ -1,5 +1,6 @@
 import { EventEmitter } from './eventEmiter'
 import { Plugin } from "../plugins/plugin";
+import { defaultTemplate } from '../plugins/template'
 import { Hooks, HooksType } from '../interface/hooks'
 import { UploadOptions, ElementParam } from "../interface/uploadParams";
 import { callWithErrorHandling, isUndef, warn, getElement, addEvent  } from '../utils/index'
@@ -16,6 +17,7 @@ interface PluginsMap {
 
 
 const DEFAULT_OPTIONS: UploadOptions = {
+  template: defaultTemplate,
   name: "file",
   showFileList: true,
   drag: true,
@@ -44,8 +46,9 @@ export class UploadConstructor<O = {}> extends EventEmitter {
   }
 
   private init() {
-    const { template } = this.optiosn
-    this.container =  getElement(template)
+    const { el, template } = this.optiosn
+    this.container =  getElement(el)
+    this.container.innerHTML = template
     this.applyPlugins()
     this.invokePluginHook('init')
     this.setEventLister()

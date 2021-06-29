@@ -4,7 +4,8 @@ export type ElementParam = HTMLElement | string
 
 
 export type UploadOptions = Partial<{
-    template: ElementParam                                      // 自定义UI模板
+    el: ElementParam,
+    template: string,                                      // 自定义UI模板
     name: string,                                                   // 上传名称
     headers: object,                                                // 上传请求头
     accept: string,                                                 // 限制文件类型
