@@ -34,7 +34,7 @@ const DEFAULT_OPTIONS: UploadOptions = {
 export class UploadConstructor<O = {}> extends EventEmitter {
   static plugins: Plugin[] = [];
   static pluginsMap: PluginsMap = {};
-  optiosn: UploadOptions = {}
+  options: UploadOptions = {}
   container: HTMLElement | null
   fileList: File[]
   [key: string]: any;
@@ -43,12 +43,12 @@ export class UploadConstructor<O = {}> extends EventEmitter {
 
   constructor(opt: UploadOptions & O) {
     super()
-    this.optiosn = { ...DEFAULT_OPTIONS, ...opt };
+    this.options = { ...DEFAULT_OPTIONS, ...opt };
     this.init();
   }
 
   private init() {
-    const { el, template } = this.optiosn
+    const { el, template } = this.options
     this.container =  getElement(el)
     this.container.innerHTML = template
     this.applyPlugins()
@@ -57,8 +57,9 @@ export class UploadConstructor<O = {}> extends EventEmitter {
   }
 
   private setEventLister() {
+    this.on('uploadFile', this.uploadFile)
     const { container } = this
-    const inputElement = this.createInputElemnt()
+    const inputElement = this.createInputElement()
     addEvent(container, 'click', () => {
       inputElement.value = null
       inputElement.click()
@@ -67,41 +68,42 @@ export class UploadConstructor<O = {}> extends EventEmitter {
       const fileList = (e.target as HTMLInputElement).files
       if (!fileList || !fileList.length) return
       this.fileList.push(...Array.from(fileList))
-      this.uploadFile()
+      this.trigger('uploadFile')
     })
+
   }
 
   private uploadFile() {
     this.invokePluginHook('beforeUpload')
     const { fileList } = this
-    const { name, accept, headers } = this.optiosn
+    const { name, accept, headers } = this.options
     const adapter = createAdapter()
     const formData = new FormData()
     fileList.forEach(file => {
       formData.append(name, file)
     })
 
-    adapter({
-      url: accept,
-      headers,
-      body: formData,
-      onProgress(e) {
-        this.invokePluginHook('onUpload')
-      },
-      onSuccess() {
+    // adapter({
+    //   url: accept,
+    //   headers,
+    //   body: formData,
+    //   onProgress(e) {
+    //     this.invokePluginHook('onUpload')
+    //   },
+    //   onSuccess() {
         
-      },
-      onError() {
+    //   },
+    //   onError() {
 
-      }
-    })
+    //   }
+    // })
   }
 
 
 
-  private createInputElemnt() {
-    const { container, optiosn } = this
-    const { accept, multiple } = optiosn
+  private createInputElement() {
+    const { container, options } = this
+    const { accept, multiple } = options
     const inputElement: HTMLInputElement = document.createElement('input')
     inputElement.setAttribute('style', 'display: none');
     inputElement.setAttribute('type', 'file')
@@ -167,7 +169,7 @@ export class UploadConstructor<O = {}> extends EventEmitter {
     UploadConstructor.plugins = []
     UploadConstructor.pluginsMap = {}
     this.pluginsHooks = {}
-    this.optiosn = {}
+    this.options = {}
     this.container = null
   }
 
