@@ -2,8 +2,10 @@ import {
     beforeUploadHook,
     onUploadHook,
     afterUploadHook,
-    destroyHook
-} from '../interface/hooks'
+    destroyHook,
+    InitHook,
+    CreateHook
+} from './hooks'
 
 
 export type Plugin = Partial<{
@@ -11,6 +13,8 @@ export type Plugin = Partial<{
     onUpload: onUploadHook;
     afterUpload: afterUploadHook
     destroy: destroyHook;
+    init: InitHook;
+    create: CreateHook;
 }> & {
     name: string
 }

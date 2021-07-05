@@ -24,7 +24,9 @@ export class EventEmitter {
       }
 
       this.events[type].push([fn, context])
-      return this
+      return () => {
+        this.off(type, fn)
+      }
     }
 
     once(type: string, fn: Function, context: Object = this) {
@@ -79,7 +81,7 @@ export class EventEmitter {
       }
 
       let len = events.length
-      let eventsCopy = [...events]
+      let eventsCopy = Array.from(events)
       let ret
       for (let i = 0; i < len; i++) {
         let event = eventsCopy[i]

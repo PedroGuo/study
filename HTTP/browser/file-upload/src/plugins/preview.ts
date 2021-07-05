@@ -1,11 +1,10 @@
-import { Plugin } from './plugin'
+import { Plugin } from '../interface/Plugin'
 import { UploadFile } from '../interface/hooks'
 import { Upload } from '../core/index'
 
 export const previewPlugin: Plugin = {
     name: 'previewPlugin',
-    beforeUpload(file: UploadFile, ctx: Upload): UploadFile {
+    beforeUpload(ctx: Upload) {
         console.log('预览文件')
-        return file
     }
 }
